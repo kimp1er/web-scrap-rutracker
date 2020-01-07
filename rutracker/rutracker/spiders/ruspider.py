@@ -14,12 +14,12 @@ class RuspiderSpider(scrapy.Spider):
         topics = response.css('.hl-tr')
         self.logger.info('Topic counts in page is %s' % len(topics))
         for topic in topics:
-            self.logger.info('%s' % topic)
-            self.logger.info(topic.__dir__())
-            self.logger.info('%s' % topic.css('.tt')[0].get())
-            #  self.logger.info('%s' % {
-                #  'title': topic.css('vf-col-t-title')[0],
-                #  'tor': '',
-                #  'replies': '',
-                #  'lastpost': ''
-            #  })
+            t = topic.css('.tt')[0]
+            title = t.css('.torTopic .tt-text')[0]
+            title_text = title.css('::text').get()
+            link = title.attrib['href']
+
+            self.logger.info('%s' % {
+                'title': title_text,
+                'link': link
+            })
