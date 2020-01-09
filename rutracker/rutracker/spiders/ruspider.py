@@ -2,15 +2,13 @@
 
 import scrapy
 from scrapy.loader import ItemLoader
-from scrapy.loader.processors import Join
 from rutracker.items import RutrackerItem
 import logging
 
 
-def link_out_first(loader, item):
-    logging.info(f'Loader is {loader}')
-    return item[0]
 
+def take_first(loader, item):
+    return item[0]
 
 def url_in_first(loader, url):
     link = loader.load_item()['link']
@@ -18,15 +16,18 @@ def url_in_first(loader, url):
     return new_url_is
 
 
-def url_out_first(loader, url):
-    return url[0]
+def title_join(loader, title):
+    return '|'.join(title)
+
 
 
 class RuLoader(ItemLoader):
-    title_out = Join()
-    link_out = link_out_first
+    title_in = title_join
+    title_out = take_first
+    link_out = take_first
     url_in = url_in_first
-    url_out = url_out_first
+    url_out = take_first
+    source_url_out = take_first
 
 
 class RuspiderSpider(scrapy.Spider):
@@ -45,7 +46,9 @@ class RuspiderSpider(scrapy.Spider):
 
     def parse_items(self, selector, response):
         ld = RuLoader(item=RutrackerItem(), selector=selector)
-        ld.add_css('title', '.torTopic a ::text', Join())
+        ld.add_css('title', '.torTopic a ::text')
         ld.add_css('link', '.torTopic a ::attr(href)')
         ld.add_value('url', response)
+
+        ld.add_value('source_url', response.url)
         return ld.load_item()

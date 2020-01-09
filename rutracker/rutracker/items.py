@@ -14,3 +14,4 @@ class RutrackerItem(Item):
     title = Field()
     link = Field()
     url = Field()
+    source_url = Field()
