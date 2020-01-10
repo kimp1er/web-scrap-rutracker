@@ -3,12 +3,11 @@
 import scrapy
 from scrapy.loader import ItemLoader
 from rutracker.items import RutrackerItem
-import logging
-
 
 
 def take_first(loader, item):
     return item[0]
+
 
 def url_in_first(loader, url):
     link = loader.load_item()['link']
@@ -20,7 +19,6 @@ def title_join(loader, title):
     return '|'.join(title)
 
 
-
 class RuLoader(ItemLoader):
     title_in = title_join
     title_out = take_first
@@ -28,13 +26,14 @@ class RuLoader(ItemLoader):
     url_in = url_in_first
     url_out = take_first
     source_url_out = take_first
+    id_out = take_first
 
 
 class RuspiderSpider(scrapy.Spider):
     name = 'ruspider'
     allowed_domains = ['rutracker.org']
     start_urls = [
-        "https://rutracker.org/forum/viewforum.php?f=194",
+        "https://rutracker.org/forum/viewforum.php?f=2221"
     ]
 
     def parse(self, response):
@@ -49,6 +48,5 @@ class RuspiderSpider(scrapy.Spider):
         ld.add_css('title', '.torTopic a ::text')
         ld.add_css('link', '.torTopic a ::attr(href)')
         ld.add_value('url', response)
-
-        ld.add_value('source_url', response.url)
+        ld.add_css('id', '::attr(id)')
         return ld.load_item()
