@@ -6,12 +6,13 @@
 # See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 import logging
 from rutracker.exporters import RedisRutrackerExporter
+from rutracker.settings import REDIS_SETTINGS as RS
 
 
 class RutrackerPipeline(object):
 
     def open_spider(self, spider):
-        self.exporter = RedisRutrackerExporter('192.168.64.6')
+        self.exporter = RedisRutrackerExporter(redis_settings=RS)
         self.exporter.start_exporting()
 
     def close_spider(self, spider):
@@ -20,5 +21,5 @@ class RutrackerPipeline(object):
     def process_item(self, item, spider):
         logging.info(f'Pipeline item is: {item}')
         logging.info(f'Pipeline spider is: {spider}')
-        self.exporter.export_item(item),
+        self.exporter.export_item(item)
         return item

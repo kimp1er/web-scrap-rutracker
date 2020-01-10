@@ -29,6 +29,10 @@ class RuLoader(ItemLoader):
     id_out = take_first
 
 
+class RuTopicLoader(ItemLoader):
+    id_out = take_first
+
+
 class RuspiderSpider(scrapy.Spider):
     name = 'ruspider'
     allowed_domains = ['rutracker.org']

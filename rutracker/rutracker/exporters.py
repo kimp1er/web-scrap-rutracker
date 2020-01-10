@@ -7,17 +7,21 @@ from scrapy.utils.python import to_bytes
 
 
 class RedisRutrackerExporter(BaseItemExporter):
-    def __init__(self, host, **kwargs):
+    def __init__(self, redis_settings, **kwargs):
         self._configure(kwargs, dont_fail=True)
-        kwargs.setdefault('ensure_ascii', not self.encoding)
+        self.encoding = 'UTF-8'
         self.encoder = ScrapyJSONEncoder(**kwargs)
-        self.db = redis.Redis(host)
+        self.db = redis.Redis(**redis_settings)
 
     def export_item(self, item):
         itemdict = dict(self._get_serialized_fields(item))
         data = self.encoder.encode(itemdict) + '\n'
+        item_id = item.get('id')
+
+        key_prefix = f'{item.__class__.__name__}_{ item_id }'
+
         self.db.set(
-            name='rutracker_' + item.get('id'),
+            name=key_prefix,
             value=to_bytes(data, self.encoding),
-            ex=600
+            ex=1231244
         )

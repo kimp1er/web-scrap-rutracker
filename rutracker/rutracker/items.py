@@ -18,12 +18,14 @@ class RutrackerItem(Item):
     id = Field()
 
 
-class RutrackerItemTopid(Item):
+class RutrackerItemTopic(Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     title = Field()
     link = Field()
     url = Field()
-    discription = Field()
+    description = Field()
     image = Field()
     source_url = Field()
+    id = Field()
+    meta = Field()
