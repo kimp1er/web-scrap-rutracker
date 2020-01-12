@@ -32,12 +32,12 @@ class RutopicSpider(scrapy.Spider):
             yield Request(i['url'], dont_filter=True, meta=i)
 
     def parse(self, response):
-        body_elements = response.css('.post_wrap')[0].xpath('div/span[1]')[0]
+        body_elements = response.xpath('//table[@id="topic_main"][@class="topic"]/tbody[2]')[0]
         ld = RuTopicLoader(item=RutrackerItemTopic(), selector=body_elements)
-        ld.add_css('description', '::text')
+        ld.add_xpath('description', '//span[re:test(@class, "post-\w*$")]//text()')
         ld.add_css('image', '.img-right::attr(title)')
         ld.add_value('source_url', response.url)
         ld.add_value('id', response.meta.get('id'))
-        ld.add_value('meta', response.meta)
+        ld.add_value('meta', {'metadata': [x.attrib for x in body_elements.xpath('//span[re:test(@class, "post-\w$")]')]})
 
         return ld.load_item()
