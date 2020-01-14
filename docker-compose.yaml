@@ -1,9 +1,8 @@
 ---
 version: '3'
 services:
-  web:
+  spider:
     build: .
-    command: ['scrapy', 'crawl', 'ruspider']
     depends_on:
       - "redis"
   redis:
