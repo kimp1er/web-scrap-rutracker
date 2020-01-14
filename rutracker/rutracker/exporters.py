@@ -8,6 +8,7 @@ from scrapy.utils.python import to_bytes
 
 class RedisRutrackerExporter(BaseItemExporter):
     def __init__(self, redis_settings, **kwargs):
+        super(BaseItemExporter, self).__init__(**kwargs)
         self._configure(kwargs, dont_fail=True)
         self.encoding = 'UTF-8'
         self.encoder = ScrapyJSONEncoder(**kwargs)
